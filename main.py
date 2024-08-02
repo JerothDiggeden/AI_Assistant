@@ -2,6 +2,7 @@ import openai
 import requests
 import pyaudio
 import pyttsx3
+from datetime import date
 from icecream import ic
 from openai import OpenAI
 import speech_recognition as sr
@@ -36,31 +37,61 @@ def chat_gpt():
 		"Content-Type": "application/json"
 	}
 
-	response = requests.post(url_gpt, json=payload, headers=headers)
-	response = response.json()
-	response = response['result']
-	speak = response
+	response_gpt = requests.post(url_gpt, json=payload, headers=headers)
+	response_gpt = response_gpt.json()
+	response_gpt = response_gpt['result']
+	speak = response_gpt
 
 	engine.say(speak)
 	engine.runAndWait()
 
 
 # WEATHER API
-def weather():
-	url_weather = "https://weatherapi-com.p.rapidapi.com/current.json"
+def weather_current():
+	url_weather_current = "https://weatherapi-com.p.rapidapi.com/current.json"
 
-	querystring = {"q":"53.1,-0.13"}
+	querystring = {"q":"Perth"}
 
 	headers = {
 		"x-rapidapi-key": "1b6ce2494dmshf74f9c461b4cdbbp1d3b11jsndd6ab0d8575c",
 		"x-rapidapi-host": "weatherapi-com.p.rapidapi.com"
 	}
 
-	response = requests.get(url_weather, headers=headers, params=querystring)
+	response_current = requests.get(url_weather_current, headers=headers, params=querystring)
 
-	print(response.json())
+	response_current = response_current.json()
+	weather_current = (f"The current temperature is {response_current['current']['temp_c']}, "
+					   f"{response_current['current']['condition']['text']}")
+	engine.say(weather_current)
+	engine.runAndWait()
+	print(response_current)
+
+
+def weather_future():
+	url_weather_future = "https://weatherapi-com.p.rapidapi.com/future.json"
+
+	querystring = {"q": "Perth"}
+
+	headers = {
+		"x-rapidapi-key": "1b6ce2494dmshf74f9c461b4cdbbp1d3b11jsndd6ab0d8575c",
+		"x-rapidapi-host": "weatherapi-com.p.rapidapi.com"
+	}
+
+	response_future = requests.get(url_weather_future, headers=headers, params=querystring)
+
+	print(response_future.json())
+
+
+def date_time():
+	today = date.today()
+	engine.say(today.strftime("%A %d. %B %Y"))
+	engine.runAndWait()
 
 
 while True:
 	msg = input("Ask a question... ")
-	chat_gpt()
+	# chat_gpt()
+	date_time()
+	weather_current()
+	weather_future()
+
