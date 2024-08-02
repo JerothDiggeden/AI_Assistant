@@ -82,6 +82,43 @@ def weather_future():
 	print(response_future.json())
 
 
+def news_science():
+	url_news_sc = "https://google-news13.p.rapidapi.com/science"
+
+	querystring = {"lr":"en-US"}
+
+	headers = {
+		"x-rapidapi-key": "1b6ce2494dmshf74f9c461b4cdbbp1d3b11jsndd6ab0d8575c",
+		"x-rapidapi-host": "google-news13.p.rapidapi.com"
+	}
+
+	response_news_sc = requests.get(url_news_sc, headers=headers, params=querystring)
+	response_news_sc = response_news_sc.json()
+	ic(response_news_sc)
+
+	variable_names = ['art_1', 'art_2', 'art_3']
+	variables = {}
+	values = []
+	count = 0
+
+	for item in response_news_sc['items']:
+		if 'title' in item:
+			values.append(item['title'])
+		else:
+			continue
+
+	for name, value in zip(variable_names, values):
+		variables[name] = value
+
+	ic(response_news_sc)
+	ic(variables)
+
+	engine.say(variables['art_1'])
+	engine.say(variables['art_2'])
+	engine.say(variables['art_3'])
+	engine.runAndWait()
+
+
 def date_time():
 	today = date.today()
 	engine.say(today.strftime("%A %d. %B %Y"))
@@ -94,4 +131,5 @@ while True:
 	date_time()
 	weather_current()
 	weather_future()
+	news_science()
 
